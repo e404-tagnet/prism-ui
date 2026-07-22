@@ -66,7 +66,8 @@ html, body { height: 100%; font-family: var(--font-sans); background: var(--crus
 .workspace-link-item:hover { color: var(--teal); background: var(--surface0); }
 
 /* ── Chat Area ──────────────────────────── */
-.chat-area { display: flex; flex-direction: column; background: var(--base); position: relative; }
+.chat-area { display: flex; flex-direction: column; background: var(--base); position: relative; overflow: hidden; }
+.chat-area { min-height: 0; }
 .chat-header { display: flex; align-items: center; justify-content: space-between; padding: .75rem 1.25rem; border-bottom: 1px solid var(--surface0); min-height: 56px; }
 .chat-header h2 { font-size: 1rem; font-weight: 600; color: var(--text); }
 
@@ -77,7 +78,7 @@ html, body { height: 100%; font-family: var(--font-sans); background: var(--crus
 /* ── Project Tabs ──────────────────────────── */
 .project-tabs { display: flex; gap: 0; margin-top: .35rem; border-bottom: 1px solid var(--surface0); }
 .project-tabs.hidden { display: none; }
-.project-tab { padding: .25rem .6rem; background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--overlay0); font-size: .72rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+.project-tab { padding: .45rem 1.2rem; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--overlay0); font-size: .9rem; font-weight: 700; cursor: pointer; transition: all .15s; text-transform: uppercase; letter-spacing: .03em; }
 .project-tab:hover { color: var(--text); }
 .project-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
 .project-view { display: none; flex-direction: column; flex: 1; padding: 1.25rem; min-height: 0; }
@@ -100,11 +101,13 @@ html, body { height: 100%; font-family: var(--font-sans); background: var(--crus
 
 .messages { flex: 1; overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; min-height: 0; }
 
-.message { display: flex; flex-direction: column; gap: .35rem; max-width: 85%; animation: fadeIn .25s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-
+.message { display: flex; flex-direction: column; gap: .35rem; max-width: 85%; animation: fadeIn .25s ease; cursor: default; }
 .message.user { align-self: flex-end; }
 .message.assistant { align-self: flex-start; }
+.message.user.selectable { cursor: pointer; }
+.message.user.selectable:hover .message-bubble { box-shadow: 0 0 0 1px var(--teal); }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
 .message-bubble { padding: .85rem 1.1rem; border-radius: .9rem; line-height: 1.55; font-size: .92rem; word-wrap: break-word; }
 .message.user .message-bubble { background: var(--surface1); color: var(--text); border-bottom-right-radius: .2rem; }
@@ -342,11 +345,33 @@ html, body { height: 100%; font-family: var(--font-sans); background: var(--crus
 
 /* ── Sub-questions in onboarding ───────────── */
 .onboarding-q.sub-q { padding-left: 1rem; border-left: 2px solid var(--surface0); margin-top: .75rem; }
-.onboarding-q.sub-q h5 { color: var(--teal); font-size: .82rem; margin-bottom: .4rem; }
-.onboarding-q input[type="text"] { width: 100%; padding: .5rem .6rem; background: var(--surface0); border: 1px solid var(--surface1); border-radius: 6px; color: var(--text); font-size: .85rem; margin-top: .25rem; }
-.onboarding-q input[type="text"]:focus { border-color: var(--sapphire); outline: none; }
-#prompt-preview { border: 1px solid var(--surface1); }
-#prompt-preview-text { font-family: ui-monospace, SFMono-Regular, monospace; line-height: 1.5; }
+
+/* ── Doc Builder (Overview / Plan / Review) ─── */
+.doc-builder { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; height: 100%; min-height: 0; }
+.doc-builder-left { display: flex; flex-direction: column; gap: .75rem; min-height: 0; overflow-y: auto; }
+.doc-builder-right { display: flex; flex-direction: column; background: var(--mantle); border: 1px solid var(--surface0); border-radius: .5rem; overflow: hidden; }
+.doc-builder-header h3 { font-size: .95rem; font-weight: 600; color: var(--teal); margin-bottom: .2rem; }
+.doc-add-bar { display: flex; gap: .5rem; padding: .5rem 0; border-top: 1px solid var(--surface0); }
+.doc-add-bar select { background: var(--base); border: 1px solid var(--surface0); border-radius: .35rem; padding: .35rem .5rem; color: var(--text); font-size: .8rem; }
+.doc-section { display: flex; flex-direction: column; gap: .25rem; padding: .5rem; background: var(--mantle); border: 1px solid var(--surface0); border-radius: .35rem; }
+.doc-section-header { display: flex; align-items: center; justify-content: space-between; }
+.doc-section-type-label { font-size: .65rem; text-transform: uppercase; color: var(--teal); font-weight: 600; letter-spacing: .04em; }
+.doc-section textarea, .doc-section input[type="text"] { width: 100%; padding: .4rem .5rem; background: var(--base); border: 1px solid var(--surface0); border-radius: .3rem; color: var(--text); font-size: .82rem; font-family: inherit; }
+.doc-section textarea { min-height: 80px; resize: vertical; }
+.doc-section .bullet-row { display: flex; gap: .35rem; align-items: center; }
+.doc-section .bullet-row input { flex: 1; }
+.doc-section-actions { display: flex; gap: .3rem; }
+.doc-section-actions button { font-size: .65rem; padding: .15rem .3rem; }
+.doc-preview-header { display: flex; align-items: center; justify-content: space-between; padding: .75rem 1rem; border-bottom: 1px solid var(--surface0); background: var(--base); }
+.doc-preview-header h4 { font-size: .8rem; color: var(--subtext0); text-transform: uppercase; letter-spacing: .04em; }
+.doc-preview { flex: 1; padding: 1rem; overflow-y: auto; font-size: .88rem; line-height: 1.7; color: var(--text); }
+.doc-preview h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: .5rem; }
+.doc-preview h2 { font-size: 1.1rem; font-weight: 600; margin: 1rem 0 .4rem; color: var(--teal); }
+.doc-preview p { margin-bottom: .75rem; }
+.doc-preview ul { padding-left: 1.5rem; margin-bottom: .75rem; }
+.doc-preview li { margin-bottom: .2rem; }
+.doc-preview pre { background: var(--crust); padding: .75rem; border-radius: .3rem; overflow-x: auto; font-size: .8rem; font-family: var(--font-mono); margin-bottom: .75rem; }
+.doc-preview-empty { color: var(--overlay0); text-align: center; padding-top: 2rem; font-style: italic; }
 
 /* Responsive */
 @media (max-width: 768px) {

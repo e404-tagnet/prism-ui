@@ -56,7 +56,7 @@
       <div class="sidebar-section">
         <button class="sidebar-section-toggle" id="workspace-toggle-btn">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="section-chevron"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          Workspaces
+          Linked Folders
         </button>
         <div class="sidebar-section-content hidden" id="workspace-submenu">
           <div id="workspace-links">
@@ -88,7 +88,7 @@
             <button class="project-tab" data-view="review">Review</button>
           </div>
           <div id="workspace-bar" class="workspace-bar hidden">
-            <span class="workspace-label">Workspace:</span>
+            <span class="workspace-label">Linked:</span>
             <span id="workspace-path" class="workspace-path"></span>
             <span id="workspace-count" class="workspace-count"></span>
             <button id="workspace-toggle" class="btn btn-ghost btn-sm">Files</button>
@@ -96,6 +96,9 @@
           <div id="workspace-files" class="workspace-files hidden"></div>
         </div>
         <div class="header-actions">
+          <button id="memory-toggle" class="btn btn-ghost btn-sm" title="Toggle Memory Panel">
+            Memory
+          </button>
           <button id="analysis-toggle" class="btn btn-ghost btn-sm" title="Toggle Chat Analysis">
             Analysis
           </button>
@@ -134,37 +137,94 @@
 
     <!-- Overview View -->
     <div id="view-overview" class="project-view">
-      <div class="view-header">
-        <h3>Project Overview</h3>
-        <p style="color:var(--overlay0);font-size:.8rem;">A living summary of the project. Update as work progresses.</p>
-      </div>
-      <textarea id="overview-text" placeholder="What is this project about? What have you learned so far?"></textarea>
-      <div class="view-actions">
-        <button class="btn btn-primary btn-sm" id="save-overview">Save Overview</button>
+      <div class="doc-builder">
+        <div class="doc-builder-left">
+          <div class="doc-builder-header">
+            <h3>Project Overview</h3>
+            <p style="color:var(--overlay0);font-size:.8rem;">A living summary of the project. Update as work progresses.</p>
+          </div>
+          <div class="doc-sections" id="overview-sections"></div>
+          <div class="doc-add-bar">
+            <select id="overview-section-type">
+              <option value="title">Title</option>
+              <option value="heading">Heading</option>
+              <option value="paragraph" selected>Paragraph</option>
+              <option value="bullets">Bullet List</option>
+              <option value="code">Code Block</option>
+            </select>
+            <button class="btn btn-primary btn-sm" id="overview-add-section">Add Section</button>
+          </div>
+          <button class="btn btn-primary btn-sm" id="save-overview">Save Overview</button>
+        </div>
+        <div class="doc-builder-right">
+          <div class="doc-preview-header">
+            <h4>Preview</h4>
+            <button class="btn btn-ghost btn-sm" id="copy-overview">Copy</button>
+          </div>
+          <div class="doc-preview" id="overview-preview"></div>
+        </div>
       </div>
     </div>
 
     <!-- Plan View -->
     <div id="view-plan" class="project-view">
-      <div class="view-header">
-        <h3>Project Plan</h3>
-        <p style="color:var(--overlay0);font-size:.8rem;">Goals, milestones, and next steps.</p>
-      </div>
-      <textarea id="plan-text" placeholder="What needs to happen? What's the timeline?"></textarea>
-      <div class="view-actions">
-        <button class="btn btn-primary btn-sm" id="save-plan">Save Plan</button>
+      <div class="doc-builder">
+        <div class="doc-builder-left">
+          <div class="doc-builder-header">
+            <h3>Project Plan</h3>
+            <p style="color:var(--overlay0);font-size:.8rem;">Goals, milestones, and next steps.</p>
+          </div>
+          <div class="doc-sections" id="plan-sections"></div>
+          <div class="doc-add-bar">
+            <select id="plan-section-type">
+              <option value="title">Title</option>
+              <option value="heading" selected>Heading</option>
+              <option value="paragraph">Paragraph</option>
+              <option value="bullets">Bullet List</option>
+              <option value="code">Code Block</option>
+            </select>
+            <button class="btn btn-primary btn-sm" id="plan-add-section">Add Section</button>
+          </div>
+          <button class="btn btn-primary btn-sm" id="save-plan">Save Plan</button>
+        </div>
+        <div class="doc-builder-right">
+          <div class="doc-preview-header">
+            <h4>Preview</h4>
+            <button class="btn btn-ghost btn-sm" id="copy-plan">Copy</button>
+          </div>
+          <div class="doc-preview" id="plan-preview"></div>
+        </div>
       </div>
     </div>
 
     <!-- Review View -->
     <div id="view-review" class="project-view">
-      <div class="view-header">
-        <h3>Project Review</h3>
-        <p style="color:var(--overlay0);font-size:.8rem;">Reflections, lessons learned, and outcomes.</p>
-      </div>
-      <textarea id="review-text" placeholder="What worked? What didn't? What would you do differently?"></textarea>
-      <div class="view-actions">
-        <button class="btn btn-primary btn-sm" id="save-review">Save Review</button>
+      <div class="doc-builder">
+        <div class="doc-builder-left">
+          <div class="doc-builder-header">
+            <h3>Project Review</h3>
+            <p style="color:var(--overlay0);font-size:.8rem;">Reflections, lessons learned, and outcomes.</p>
+          </div>
+          <div class="doc-sections" id="review-sections"></div>
+          <div class="doc-add-bar">
+            <select id="review-section-type">
+              <option value="title">Title</option>
+              <option value="heading">Heading</option>
+              <option value="paragraph" selected>Paragraph</option>
+              <option value="bullets">Bullet List</option>
+              <option value="code">Code Block</option>
+            </select>
+            <button class="btn btn-primary btn-sm" id="review-add-section">Add Section</button>
+          </div>
+          <button class="btn btn-primary btn-sm" id="save-review">Save Review</button>
+        </div>
+        <div class="doc-builder-right">
+          <div class="doc-preview-header">
+            <h4>Preview</h4>
+            <button class="btn btn-ghost btn-sm" id="copy-review">Copy</button>
+          </div>
+          <div class="doc-preview" id="review-preview"></div>
+        </div>
       </div>
     </div>
   </main>
@@ -191,10 +251,10 @@
         <div class="memory-form hidden" id="memory-form">
           <textarea id="memory-input" placeholder="Add a new memory... (AI decides final placement)" rows="6"></textarea>
           <select id="memory-impression">
-            <option value="">AI decides tier</option>
-            <option value="hot">Feels urgent (hot)</option>
-            <option value="warm">Might matter later (warm)</option>
-            <option value="cool">Reference only (cool)</option>
+            <option value="">User preference (AI final call)</option>
+            <option value="hot">Hot — urgent, use now</option>
+            <option value="warm">Warm — might matter later</option>
+            <option value="cool">Cool — reference only</option>
           </select>
           <button id="memory-add" class="btn btn-primary btn-sm">Add</button>
         </div>
@@ -205,7 +265,7 @@
   <!-- Settings Modal -->
   <div id="settings-modal" class="modal hidden">
     <div class="modal-backdrop"></div>
-    <div class="modal-card" style="width:480px;max-height:90vh;display:flex;flex-direction:column;">
+    <div class="modal-card" style="width:480px;height:80vh;display:flex;flex-direction:column;">
       <header class="modal-header">
         <h3>Settings</h3>
         <button class="btn btn-ghost btn-sm" id="close-settings">×</button>
@@ -220,7 +280,7 @@
         <!-- General Tab -->
         <div id="tab-general" class="setting-panel active">
           <div class="setting-row">
-            <label for="model-endpoint">LLM Endpoint</label>
+            <label for="model-endpoint">Provider URL</label>
             <input type="text" id="model-endpoint" value="http://127.0.0.1:8080">
             <p style="color:var(--overlay0);font-size:.75rem;margin-top:.25rem;">llama.cpp server, Ollama, or any OpenAI-compatible endpoint.</p>
           </div>
@@ -234,6 +294,18 @@
             </select>
           </div>
           <div class="setting-row">
+            <label>Temperature (0.0 - 1.0)</label>
+            <div class="temp-slider">
+              <input type="range" id="temperature" min="0" max="100" value="50">
+              <input type="number" id="temperature-num" min="0" max="1" step="0.01" value="0.50" style="width:70px;text-align:center;">
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--overlay0);margin-top:.3rem;">
+              <span>Cautious</span>
+              <span id="temp-label">Balanced</span>
+              <span>Creative</span>
+            </div>
+          </div>
+          <div class="setting-row">
             <label for="use-prism">Enable Analysis</label>
             <input type="checkbox" id="use-prism" checked>
           </div>
@@ -243,13 +315,6 @@
               <option value="shadow">Shadow (log only)</option>
               <option value="active">Active (inject into prompt)</option>
             </select>
-          </div>
-          <div class="setting-row">
-            <label>Creativity (Temperature)</label>
-            <div class="temp-slider">
-              <input type="range" id="temperature" min="0" max="100" value="50">
-              <span id="temp-label">Balanced</span>
-            </div>
           </div>
           <div class="setting-row">
             <label>System Prompt</label>
@@ -278,7 +343,7 @@
             <p style="color:var(--overlay0);font-size:.75rem;">Memories stay hot for 24 hours before decaying to warm.</p>
           </div>
           <div class="setting-row">
-            <label>Warm Memory Duration></label>
+            <label>Warm Memory Duration</label>
             <p style="color:var(--overlay0);font-size:.75rem;">Warm memories decay to cool after 1 week.</p>
           </div>
           <div class="setting-row">
@@ -327,7 +392,7 @@
           <textarea id="project-desc-input" rows="2" placeholder="What is this project about?"></textarea>
         </div>
         <div class="setting-row">
-          <label for="project-workspace-input">Workspace Folder (optional)</label>
+          <label for="project-workspace-input">Linked Folder (optional)</label>
           <input type="text" id="project-workspace-input" placeholder="e.g. /home/user/project-docs">
           <p style="color:var(--overlay0);font-size:.75rem;margin-top:.25rem;">Link a local folder. Files become available in the project context.</p>
         </div>

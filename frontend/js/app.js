@@ -344,9 +344,9 @@ async function selectProject(pid) {
 
   // Load context fields
   const ctx = currentProject.context || {};
-  document.getElementById("overview-text").value = ctx.overview || "";
-  document.getElementById("plan-text").value = ctx.plan || "";
-  document.getElementById("review-text").value = ctx.review || "";
+  loadDocBuilder("overview", ctx.overview || "");
+  loadDocBuilder("plan", ctx.plan || "");
+  loadDocBuilder("review", ctx.review || "");
 }
 
 async function createProject(name, description, workspacePath = null) {
@@ -416,7 +416,7 @@ function appendMessage(role, content, prismMeta, animate = true) {
 
   // Click the whole user message to open analysis
   if (prismMeta && role === "user") {
-    wrapper.style.cursor = "pointer";
+    wrapper.classList.add("selectable");
     wrapper.addEventListener("click", () => {
       showAnalysisInspector(prismMeta);
     });
@@ -672,17 +672,6 @@ function switchProjectView(view) {
   if (routeGuide) routeGuide.style.display = view === "chat" ? "" : "none";
 }
 
-async function saveProjectContext(field) {
-  if (!currentProject) return;
-  const value = document.getElementById(`${field}-text`)?.value || "";
-  await fetch(`${API_BASE}/api/projects/${currentProject.id}/context`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ [field]: value }),
-  });
-  currentProject.context = currentProject.context || {};
-  currentProject.context[field] = value;
-}
 
 // ── Workspace ──────────────────────────────────────────────
 let workspaceFiles = [];
@@ -874,11 +863,20 @@ function loadSettings() {
 
   // Temperature slider
   const tempSlider = document.getElementById("temperature");
-  if (tempSlider) {
+  const tempNum = document.getElementById("temperature-num");
+  if (tempSlider && tempNum) {
     tempSlider.value = Math.round(settings.temperature * 100);
+    tempNum.value = settings.temperature.toFixed(2);
     updateTempLabel(settings.temperature);
     tempSlider.addEventListener("input", () => {
       const val = tempSlider.value / 100;
+      tempNum.value = val.toFixed(2);
+      updateTempLabel(val);
+    });
+    tempNum.addEventListener("input", () => {
+      let val = parseFloat(tempNum.value) || 0;
+      val = Math.max(0, Math.min(1, val));
+      tempSlider.value = Math.round(val * 100);
       updateTempLabel(val);
     });
   }
@@ -909,8 +907,7 @@ function saveSettings() {
   settings.usePrism = document.getElementById("use-prism").checked;
   settings.prismMode = document.getElementById("prism-mode").value;
   settings.privacy = document.querySelector("input[name=\"privacy\"]:checked").value;
-  const tempSlider = document.getElementById("temperature");
-  if (tempSlider) settings.temperature = tempSlider.value / 100;
+  settings.temperature = parseFloat(document.getElementById("temperature-num")?.value) || 0.5;
   const sysPrompt = document.getElementById("system-prompt");
   if (sysPrompt) settings.systemPrompt = sysPrompt.value;
   localStorage.setItem("prism-ui-settings", JSON.stringify(settings));
@@ -1019,7 +1016,7 @@ function setupEventListeners() {
   // Open plugin manager from settings
   document.getElementById("settings-open-plugins")?.addEventListener("click", () => {
     closeSettings();
-    openPluginsModal();
+    openPluginManager();
   });
 
   document.getElementById("new-project-btn")?.addEventListener("click", openNewProject);
@@ -1089,12 +1086,212 @@ function setupEventListeners() {
   ["overview", "plan", "review"].forEach(field => {
     document.getElementById(`save-${field}`)?.addEventListener("click", () => saveProjectContext(field));
   });
+
+  // Doc Builder: Add Section buttons
+  ["overview", "plan", "review"].forEach(docType => {
+    document.getElementById(`${docType}-add-section`)?.addEventListener("click", () => addDocSection(docType));
+    document.getElementById(`copy-${docType}`)?.addEventListener("click", () => copyDocPreview(docType));
+  });
 }
 
 function openSettings() { document.getElementById("settings-modal").classList.remove("hidden"); }
 function closeSettings() { document.getElementById("settings-modal").classList.add("hidden"); }
 function openNewProject() { document.getElementById("new-project-modal").classList.remove("hidden"); }
 function closeNewProject() { document.getElementById("new-project-modal").classList.add("hidden"); }
+
+// ── Doc Builder ───────────────────────────────────────────
+const docBuilders = { overview: [], plan: [], review: [] };
+
+function loadDocBuilder(docType, savedData) {
+  // Parse legacy plain text into sections, or load structured data
+  const container = document.getElementById(`${docType}-sections`);
+  if (!container) return;
+  container.innerHTML = "";
+  docBuilders[docType] = [];
+
+  if (savedData) {
+    try {
+      const parsed = JSON.parse(savedData);
+      if (Array.isArray(parsed)) {
+        parsed.forEach(s => addDocSection(docType, s.type, s.content));
+        return;
+      }
+    } catch (e) {}
+    // Legacy: plain text
+    addDocSection(docType, "paragraph", savedData);
+  }
+  renderDocPreview(docType);
+}
+
+function addDocSection(docType, type, content = "") {
+  const container = document.getElementById(`${docType}-sections`);
+  if (!container) return;
+  if (!type) {
+    const select = document.getElementById(`${docType}-section-type`);
+    type = select?.value || "paragraph";
+  }
+  const id = `${docType}-sec-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+  const section = { id, type, content };
+  docBuilders[docType].push(section);
+
+  const el = document.createElement("div");
+  el.className = "doc-section";
+  el.dataset.id = id;
+
+  let inputHtml = "";
+  if (type === "title") {
+    inputHtml = `<input type="text" class="doc-sec-input" placeholder="Title..." value="${escapeHtml(content)}">`;
+  } else if (type === "heading") {
+    inputHtml = `<input type="text" class="doc-sec-input" placeholder="Heading..." value="${escapeHtml(content)}">`;
+  } else if (type === "paragraph") {
+    inputHtml = `<textarea class="doc-sec-input" placeholder="Write something...">${escapeHtml(content)}</textarea>`;
+  } else if (type === "bullets") {
+    const bullets = content ? content.split("\n").filter(Boolean) : [""];
+    inputHtml = bullets.map((b, i) =>
+      `<div class="bullet-row"><span style="color:var(--teal);">-</span><input type="text" class="doc-sec-input" placeholder="Bullet..." value="${escapeHtml(b)}"></div>`
+    ).join("") +
+      `<button class="btn btn-ghost btn-sm add-bullet" style="align-self:flex-start;">+ Bullet</button>`;
+  } else if (type === "code") {
+    inputHtml = `<textarea class="doc-sec-input" placeholder="Paste code..." rows="4">${escapeHtml(content)}</textarea>`;
+  }
+
+  el.innerHTML = `
+    <div class="doc-section-header">
+      <span class="doc-section-type-label">${type}</span>
+      <div class="doc-section-actions">
+        <button class="btn btn-ghost btn-sm" data-move="up">↑</button>
+        <button class="btn btn-ghost btn-sm" data-move="down">↓</button>
+        <button class="btn btn-ghost btn-sm danger" data-delete>x</button>
+      </div>
+    </div>
+    ${inputHtml}
+  `;
+
+  // Wire events
+  const inputs = el.querySelectorAll(".doc-sec-input");
+  inputs.forEach(inp => {
+    inp.addEventListener("input", () => {
+      updateDocSectionData(docType, id);
+      renderDocPreview(docType);
+    });
+  });
+
+  el.querySelector("[data-delete]")?.addEventListener("click", () => {
+    docBuilders[docType] = docBuilders[docType].filter(s => s.id !== id);
+    el.remove();
+    renderDocPreview(docType);
+  });
+
+  el.querySelector("[data-move=\"up\"]")?.addEventListener("click", () => moveDocSection(docType, id, -1));
+  el.querySelector("[data-move=\"down\"]")?.addEventListener("click", () => moveDocSection(docType, id, 1));
+
+  const addBullet = el.querySelector(".add-bullet");
+  if (addBullet) {
+    addBullet.addEventListener("click", () => {
+      const row = document.createElement("div");
+      row.className = "bullet-row";
+      row.innerHTML = `<span style="color:var(--teal);">-</span><input type="text" class="doc-sec-input" placeholder="Bullet...">`;
+      addBullet.before(row);
+      row.querySelector("input").addEventListener("input", () => {
+        updateDocSectionData(docType, id);
+        renderDocPreview(docType);
+      });
+      row.querySelector("input").focus();
+    });
+  }
+
+  container.appendChild(el);
+  renderDocPreview(docType);
+  if (type !== "bullets") {
+    const firstInput = el.querySelector("input, textarea");
+    if (firstInput) firstInput.focus();
+  }
+}
+
+function updateDocSectionData(docType, id) {
+  const container = document.getElementById(`${docType}-sections`);
+  const el = container?.querySelector(`[data-id="${id}"]`);
+  if (!el) return;
+  const section = docBuilders[docType].find(s => s.id === id);
+  if (!section) return;
+
+  const inputs = el.querySelectorAll(".doc-sec-input");
+  if (section.type === "bullets") {
+    section.content = Array.from(inputs).map(i => i.value).filter(Boolean).join("\n");
+  } else {
+    section.content = inputs[0]?.value || "";
+  }
+}
+
+function moveDocSection(docType, id, dir) {
+  const arr = docBuilders[docType];
+  const idx = arr.findIndex(s => s.id === id);
+  if (idx < 0) return;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= arr.length) return;
+  [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
+  // Re-render
+  const container = document.getElementById(`${docType}-sections`);
+  if (container) {
+    container.innerHTML = "";
+    arr.forEach(s => {
+      const old = s;
+      addDocSection(docType, old.type, old.content);
+    });
+  }
+  renderDocPreview(docType);
+}
+
+function renderDocPreview(docType) {
+  const preview = document.getElementById(`${docType}-preview`);
+  if (!preview) return;
+  const sections = docBuilders[docType];
+  if (!sections.length) {
+    preview.innerHTML = `<p class="doc-preview-empty">Add sections to build your ${docType}.</p>`;
+    return;
+  }
+  preview.innerHTML = sections.map(s => {
+    if (s.type === "title") return `<h1>${escapeHtml(s.content)}</h1>`;
+    if (s.type === "heading") return `<h2>${escapeHtml(s.content)}</h2>`;
+    if (s.type === "paragraph") return `<p>${escapeHtml(s.content).replace(/\n/g, "<br>")}</p>`;
+    if (s.type === "bullets") {
+      const items = s.content.split("\n").filter(Boolean).map(b => `<li>${escapeHtml(b)}</li>`).join("");
+      return items ? `<ul>${items}</ul>` : "";
+    }
+    if (s.type === "code") return `<pre><code>${escapeHtml(s.content)}</code></pre>`;
+    return "";
+  }).join("");
+}
+
+function copyDocPreview(docType) {
+  const sections = docBuilders[docType];
+  const text = sections.map(s => {
+    if (s.type === "title") return `# ${s.content}`;
+    if (s.type === "heading") return `## ${s.content}`;
+    if (s.type === "paragraph") return s.content;
+    if (s.type === "bullets") return s.content.split("\n").filter(Boolean).map(b => `- ${b}`).join("\n");
+    if (s.type === "code") return "```\n" + s.content + "\n```";
+    return "";
+  }).join("\n\n");
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById(`copy-${docType}`);
+    if (btn) { btn.textContent = "Copied"; setTimeout(() => btn.textContent = "Copy", 1500); }
+  });
+}
+
+async function saveProjectContext(field) {
+  if (!currentProject) return;
+  // Serialize doc builder sections to JSON string for storage
+  const sections = docBuilders[field] || [];
+  const value = JSON.stringify(sections.map(s => ({ type: s.type, content: s.content })));
+  await fetch(`${API_BASE}/api/projects/${currentProject.id}/context`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ [field]: value }),
+  });
+  currentProject.context = currentProject.context || {};
+  currentProject.context[field] = value;
+}
 
 // ── Utils ───────────────────────────────────────────────────
 function escapeHtml(text) {
