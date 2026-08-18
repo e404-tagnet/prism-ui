@@ -1,5 +1,5 @@
 /**
- * Prism-UI-UI Frontend
+ * Prism UI Frontend
  * Catppuccin Mocha, dark mode, Chat Analysis
  */
 
@@ -69,7 +69,7 @@ function switchAppSection(section) {
     const helpModal = document.getElementById('help-modal');
     if (helpModal) helpModal.classList.remove('hidden');
   } else if (section === 'docs') {
-    window.open('https://github.com/e404-tagnet/polychomp-ui#readme', '_blank');
+    window.open('https://github.com/e404-tagnet/prism-ui#readme', '_blank');
   } else if (section === 'new-memory') {
     showMemoryPanel();
   } else if (section === 'workspace-folder') {

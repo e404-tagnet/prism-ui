@@ -1,4 +1,4 @@
-# Prism-UI Roadmap
+# Prism UI Roadmap
 
 ## Completed
 1. First-boot onboarding with 10-question survey

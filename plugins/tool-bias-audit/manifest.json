@@ -3,7 +3,7 @@
   "name": "Bias Audit",
   "version": "1.0.0",
   "description": "Detects cognitive biases in BOTH user messages AND AI responses, surfacing independent audit results in Chat Analysis.",
-  "author": "Prism-UI",
+  "author": "Prism UI",
   "type": "tool",
   "hooks": ["post_receive"],
   "enabled": true

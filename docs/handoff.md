@@ -1,9 +1,9 @@
-# Prism-UI Session Handoff — 2026-07-20
+# Prism UI Session Handoff — 2026-07-20
 
 ## Project State
 
-**Repo:** `e404-tagnet/polychomp-ui` (branded as Prism-UI, slug kept for continuity)
-**Local path:** `/home/e404/Dropbox/9-PROJECTS/polychomp-ui/`
+**Repo:** `e404-tagnet/prism-ui` (formerly polychomp-ui, renamed to Prism UI)
+**Local path:** `/home/e404/Dropbox/9-PROJECTS/prism-ui/`
 **Backend:** FastAPI on `http://127.0.0.1:8788` (HTTP, no SSL)
 **Frontend:** Vanilla JS served from `frontend/`
 **PRISM source:** `/home/e404/Dropbox/9-PROJECTS/prism-scaffold/src` (must stay on PYTHONPATH)
@@ -28,7 +28,7 @@
 - `8eb2206` fix: icon rail how-to, new-memory, workspace buttons wired correctly
 - `4b3caa0` feat: AI self-audit rendered in Chat Analysis panel
 - `22b7c06` feat: bias audit plugin, README, benchmark, roadmap
-- `eb9ad8f` fix: builder routes, FileResponse import, HTTP-only, Prism-UI title
+- `eb9ad8f` fix: builder routes, FileResponse import, HTTP-only, Prism UI title
 - `d2ccd0d` feat: rail JS, memory textarea+dropdown, tooltip CSS, bias expansion
 - `438e592` feat: project hierarchy backend+frontend, ProFont icons
 
@@ -37,7 +37,7 @@
 1. **Full-screen app window:** Brave Flatpak refuses `--app=` for `http://` localhost. Current workaround: isolated profile opens as normal browser window. Options: accept it, switch to Chromium Flatpak, or package as AppImage/Electron (discussed — user prefers browser for now)
 2. **Auth upgrade:** Currently Option C (file-based profile ID). Roadmap has Option B (session token continuity) as planned work
 3. **Rename projects/chats:** User wants this feature — not yet implemented, on roadmap
-4. **Screenshots:** Folder `/home/e404/Dropbox/9-PROJECTS/polychomp-ui/screenshots/` ready but empty. User was going to capture them
+4. **Screenshots:** Folder `/home/e404/Dropbox/9-PROJECTS/prism-ui/screenshots/` ready but empty. User was going to capture them
 5. **Hermes update:** User mentioned Hermes (this system) needs an update — action pending
 
 ## File Quick Reference

@@ -1,4 +1,4 @@
-# Prism-UI
+# Prism UI
 
 A local-first AI workbench with PRISM bias detection, tiered memory, plugin architecture, and project hierarchy. Runs entirely on your machine with Ollama.
 
@@ -59,7 +59,7 @@ Open http://127.0.0.1:8788 in Brave app mode (see `prism-ui-launcher.sh`).
 
 ## Repo
 
-https://github.com/e404-tagnet/polychomp-ui
+https://github.com/e404-tagnet/prism-ui
 
 ## License
 

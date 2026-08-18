@@ -1,4 +1,4 @@
-"""Prism-UI Plugin Manager
+"""Prism UI Plugin Manager
 
 A lightweight plugin system for scaffolds, skills, and tools.
 
