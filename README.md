@@ -78,7 +78,6 @@ https://github.com/e404-tagnet/prism-ui
 MIT
 
 <!-- TAGNET README FOOTER — start -->
----
 
 <div align="center">
 
