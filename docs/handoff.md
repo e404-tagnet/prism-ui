@@ -3,11 +3,11 @@
 ## Project State
 
 **Repo:** `e404-tagnet/prism-ui` (formerly polychomp-ui, renamed to Prism UI)
-**Local path:** `/home/e404/Dropbox/9-PROJECTS/prism-ui/`
+**Local path:** `/home/e404/Cloud/Git-Repos/prism-ui/`
 **Backend:** FastAPI on `http://127.0.0.1:8788` (HTTP, no SSL)
 **Frontend:** Vanilla JS served from `frontend/`
-**PRISM source:** `/home/e404/Dropbox/9-PROJECTS/prism-scaffold/src` (must stay on PYTHONPATH)
-**Server command:** `cd backend && PYTHONPATH=/home/e404/Dropbox/9-PROJECTS/prism-scaffold/src:$PYTHONPATH python3 main.py`
+**PRISM source:** `/home/e404/Cloud/Git-Repos/prism/src` (must stay on PYTHONPATH)
+**Server command:** `cd backend && PYTHONPATH=/home/e404/Cloud/Git-Repos/prism/src:$PYTHONPATH python3 main.py`
 
 ## What Is Done
 
@@ -37,7 +37,7 @@
 1. **Full-screen app window:** Brave Flatpak refuses `--app=` for `http://` localhost. Current workaround: isolated profile opens as normal browser window. Options: accept it, switch to Chromium Flatpak, or package as AppImage/Electron (discussed — user prefers browser for now)
 2. **Auth upgrade:** Currently Option C (file-based profile ID). Roadmap has Option B (session token continuity) as planned work
 3. **Rename projects/chats:** User wants this feature — not yet implemented, on roadmap
-4. **Screenshots:** Folder `/home/e404/Dropbox/9-PROJECTS/prism-ui/screenshots/` ready but empty. User was going to capture them
+4. **Screenshots:** Folder `/home/e404/Cloud/Git-Repos/prism-ui/screenshots/` ready but empty. User was going to capture them
 5. **Hermes update:** User mentioned Hermes (this system) needs an update — action pending
 
 ## File Quick Reference
@@ -70,7 +70,7 @@
 ## How to Resume
 
 1. Ensure Ollama is running (`ollama list` to check)
-2. Start backend: `cd backend && PYTHONPATH=/home/e404/Dropbox/9-PROJECTS/prism-scaffold/src:$PYTHONPATH python3 main.py`
+2. Start backend: `cd backend && PYTHONPATH=/home/e404/Cloud/Git-Repos/prism/src:$PYTHONPATH python3 main.py`
 3. Open `http://127.0.0.1:8788` in Brave
 4. Run `scripts/benchmark.py` to verify PRISM health
 5. Check `docs/roadmap.md` for next priorities
